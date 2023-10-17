@@ -1,0 +1,16 @@
+services:
+  database:
+    container_name: utfpr-distributed-systems-chat-api-database
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/postgres/data
+
+volumes:
+  pgdata:
