@@ -7,11 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Users {
   id        String   @id @default(uuid())
   name      String   @db.VarChar(255)
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  friends  Friendships[] @relation("FriendsSent")
+  friendOf Friendships[] @relation("FriendsReceived")
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Friendships {
+  senderId    String
+  recipientId String
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  sender    Users @relation("FriendsSent", fields: [senderId], references: [id])
+  recipient Users @relation("FriendsReceived", fields: [recipientId], references: [id])
+
+  @@id([senderId, recipientId])
 }
