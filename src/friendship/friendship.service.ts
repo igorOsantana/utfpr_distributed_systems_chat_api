@@ -15,7 +15,7 @@ export class FriendshipService {
     });
 
     if (exists) {
-      throw new FriendshipExceptions().exists();
+      throw new FriendshipExceptions().alreadyExists();
     }
 
     try {
@@ -33,6 +33,7 @@ export class FriendshipService {
   }
 
   async accept(senderId: string, recipientId: string): Promise<void> {
+    await this.validateIfExists(senderId, recipientId);
     try {
       await this.databaseService.friendships.update({
         where: { senderId_recipientId: { senderId, recipientId } },
@@ -44,6 +45,7 @@ export class FriendshipService {
   }
 
   async decline(senderId: string, recipientId: string): Promise<void> {
+    await this.validateIfExists(senderId, recipientId);
     try {
       await this.databaseService.friendships.update({
         where: { senderId_recipientId: { senderId, recipientId } },
@@ -87,6 +89,22 @@ export class FriendshipService {
       return FriendshipEntity.adaptMany(friendships);
     } catch (error) {
       throw new FriendshipExceptions().find(error);
+    }
+  }
+
+  private async validateIfExists(
+    senderId: string,
+    recipientId: string,
+  ): Promise<void> {
+    const exists = await this.databaseService.friendships.findUnique({
+      where: { senderId_recipientId: { senderId, recipientId } },
+    });
+
+    if (!exists) {
+      throw new FriendshipExceptions().notFound(
+        FriendshipExceptions.ID,
+        'A request for friendship does not exists',
+      );
     }
   }
 }

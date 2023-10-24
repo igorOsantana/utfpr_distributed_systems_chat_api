@@ -1,10 +1,18 @@
 import {
+  applyDecorators,
   createParamDecorator,
   ExecutionContext,
   HttpStatus,
   Type,
 } from '@nestjs/common';
-import { ApiResponse, getSchemaPath } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiResponse,
+  ApiResponseOptions,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
 export type TApiSuccessRequestItemResponseProps = {
   model: Type<any>;
@@ -21,13 +29,36 @@ export const ApiSuccessRequestItemResponse = ({
   method,
   status,
 }: TApiSuccessRequestItemResponseProps) => {
-  return ApiResponse({
+  const props = getResponseProps({
+    description,
+    model,
+    entity,
+    method,
+    status,
+  });
+  if (model) {
+    return applyDecorators(
+      ApiExtraModels(model),
+      applyResponseDecorators(status, props),
+    );
+  }
+
+  return applyDecorators(applyResponseDecorators(status, props));
+};
+
+const getResponseProps = ({
+  description,
+  model,
+  entity,
+  method,
+  status,
+}: TApiSuccessRequestItemResponseProps) => {
+  return {
+    status,
     description,
     schema: {
       properties: {
-        data: {
-          $ref: getSchemaPath(model),
-        },
+        ...(model ? { data: { $ref: getSchemaPath(model) } } : {}),
         path: {
           type: 'string',
           example: `/api/v1/${entity}/`,
@@ -46,6 +77,33 @@ export const ApiSuccessRequestItemResponse = ({
         },
       },
     },
+  };
+};
+
+const applyResponseDecorators = (
+  status: HttpStatus,
+  options: ApiResponseOptions,
+) => {
+  if (status === HttpStatus.OK) {
+    return ApiOkResponse(options);
+  } else if (status === HttpStatus.CREATED) {
+    return ApiCreatedResponse(options);
+  }
+  return ApiResponse(options);
+};
+
+export type TApiSuccessRequestItemResponseNoContentProps = Omit<
+  TApiSuccessRequestItemResponseProps,
+  'model' | 'status'
+>;
+
+export const ApiSuccessRequestItemResponseNoContent = (
+  props: TApiSuccessRequestItemResponseNoContentProps,
+) => {
+  return ApiSuccessRequestItemResponse({
+    ...props,
+    model: null,
+    status: HttpStatus.NO_CONTENT,
   });
 };
 

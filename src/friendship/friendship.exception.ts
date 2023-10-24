@@ -23,7 +23,7 @@ export class FriendshipExceptions extends ApiException {
     return new ApiException().internal('[FriendshipService - Find]', err);
   }
 
-  exists(err?: unknown) {
+  alreadyExists(err?: unknown) {
     return new ApiException().badRequest(
       FriendshipExceptions.ID,
       'A request for friendship already exists',
