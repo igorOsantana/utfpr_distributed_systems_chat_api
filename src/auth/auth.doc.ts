@@ -13,6 +13,7 @@ import {
 // ME
 export const MeSuccessResponse: TApiSuccessRequestItemResponseProps = {
   ...FindByIdOrEmailSuccessResponse,
+  entity: 'auth/me',
   model: MePresenter,
 };
 export const MeUnauthorizedResponse: TApiErrorRequestItemResponseProps = {
@@ -24,7 +25,7 @@ export const MeUnauthorizedResponse: TApiErrorRequestItemResponseProps = {
 export const SignInSuccessResponseDoc: TApiSuccessRequestItemResponseProps = {
   model: SignInAuthPresenter,
   description: 'The user has been successfully authenticated.',
-  entity: 'auth',
+  entity: 'auth/sign-in',
   method: 'POST',
   status: HttpStatus.OK,
 };
@@ -38,7 +39,7 @@ export const SignInInvalidCredentialsResponseDoc: TApiErrorRequestItemResponsePr
 export const RegisterSuccessResponseDoc: TApiSuccessRequestItemResponseProps = {
   model: RegisterAuthPresenter,
   description: 'The user has been successfully registered.',
-  entity: 'auth',
+  entity: 'auth/register',
   method: 'POST',
   status: HttpStatus.CREATED,
 };
