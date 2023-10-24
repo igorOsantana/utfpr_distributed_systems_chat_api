@@ -3,7 +3,7 @@ import {
   TApiErrorRequestItemResponseProps,
   TApiSuccessRequestItemResponseProps,
 } from 'src/shared/decorator.shared';
-import { FindByIdSuccessResponse } from '../user/user.doc';
+import { FindByIdOrEmailSuccessResponse } from '../user/user.doc';
 import {
   MePresenter,
   RegisterAuthPresenter,
@@ -12,7 +12,7 @@ import {
 
 // ME
 export const MeSuccessResponse: TApiSuccessRequestItemResponseProps = {
-  ...FindByIdSuccessResponse,
+  ...FindByIdOrEmailSuccessResponse,
   model: MePresenter,
 };
 export const MeUnauthorizedResponse: TApiErrorRequestItemResponseProps = {

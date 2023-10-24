@@ -1,10 +1,14 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   ApiErrorRequestItemResponse,
   ApiSuccessRequestItemResponse,
 } from 'src/shared/decorator.shared';
-import { FindByIdNotFoundResponse, FindByIdSuccessResponse } from './user.doc';
+import {
+  FindByIdOrEmailNotFoundResponse,
+  FindByIdOrEmailParam,
+  FindByIdOrEmailSuccessResponse,
+} from './user.doc';
 import { UserPresenter } from './user.presenter';
 import { UserService } from './user.service';
 
@@ -13,11 +17,12 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('/:id')
-  @ApiSuccessRequestItemResponse(FindByIdSuccessResponse)
-  @ApiErrorRequestItemResponse(FindByIdNotFoundResponse)
-  async findById(@Param('id') id: string) {
-    const user = await this.userService.findById(id);
+  @Get('/:idOrEmail')
+  @ApiParam(FindByIdOrEmailParam)
+  @ApiSuccessRequestItemResponse(FindByIdOrEmailSuccessResponse)
+  @ApiErrorRequestItemResponse(FindByIdOrEmailNotFoundResponse)
+  async findByIdOrEmail(@Param('idOrEmail') idOrEmail: string) {
+    const user = await this.userService.findByIdOrEmail(idOrEmail);
     return new UserPresenter(user);
   }
 }

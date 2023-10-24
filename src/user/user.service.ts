@@ -57,4 +57,26 @@ export class UserService {
       throw new UserExceptions().find(error);
     }
   }
+
+  async findByIdOrEmail(idOrEmail: string): Promise<UserEntity> {
+    try {
+      const user = await this.databaseService.users.findFirst({
+        where: {
+          OR: [{ id: idOrEmail }, { email: idOrEmail }],
+        },
+      });
+
+      if (!user) {
+        throw new UserExceptions().notFound();
+      }
+
+      return user;
+    } catch (error) {
+      if (UserExceptions.isOwnException(error)) {
+        throw error;
+      }
+
+      throw new UserExceptions().find(error);
+    }
+  }
 }
