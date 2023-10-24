@@ -10,7 +10,7 @@ export class UserService {
 
   async create(input: TCreateUser): Promise<UserEntity> {
     try {
-      return await this.databaseService.user.create({
+      return await this.databaseService.users.create({
         data: input,
       });
     } catch (error) {
@@ -20,7 +20,7 @@ export class UserService {
 
   async findById(id: string): Promise<UserEntity> {
     try {
-      const user = await this.databaseService.user.findUnique({
+      const user = await this.databaseService.users.findUnique({
         where: { id },
       });
 
@@ -40,7 +40,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<UserEntity> {
     try {
-      const user = await this.databaseService.user.findUnique({
+      const user = await this.databaseService.users.findUnique({
         where: { email },
       });
 

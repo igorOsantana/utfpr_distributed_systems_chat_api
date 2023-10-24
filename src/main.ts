@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -7,6 +8,7 @@ import { ErrorFilter } from './filters/error.filter';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor';
+import { ValidationException } from './shared/exception.shared';
 import { LoggerApi } from './shared/logger.shared';
 
 async function bootstrap() {
@@ -21,6 +23,11 @@ async function bootstrap() {
     new TimeoutInterceptor(),
   );
   app.useGlobalFilters(new ErrorFilter(logger));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors) => new ValidationException(errors),
+    }),
+  );
   setupSwagger(app);
   await app.listen(process.env.PORT || 3000);
 }

@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { ValidationError } from 'class-validator';
 
 const INTERNAL_SERVER_ERROR_MESSAGE =
   'The server encountered an error and could not complete your request';
@@ -64,5 +65,24 @@ export class ApiException extends HttpException {
   unauthorized(id: string, message: string, err?: unknown) {
     this.logError(err);
     return new ApiException(id, message, HttpStatus.UNAUTHORIZED);
+  }
+
+  forbidden(id: string, message: string, err?: unknown) {
+    this.logError(err);
+    return new ApiException(id, message, HttpStatus.FORBIDDEN);
+  }
+}
+
+export class ValidationException extends ApiException {
+  constructor(validationErrors: ValidationError[]) {
+    const formattedErrors = validationErrors.map((error) => {
+      const constraints = Object.values(error.constraints);
+      return constraints.join(', ');
+    });
+    super(
+      '@VALIDATION_EXCEPTIONS',
+      formattedErrors.join(', '),
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }
