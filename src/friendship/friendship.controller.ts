@@ -7,8 +7,8 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
+import { FriendshipControllerDoc } from './friendship.decorator';
 import {
   AcceptResponseDoc,
   CreateResponseDoc,
@@ -23,9 +23,8 @@ import {
 } from './friendship.presenter';
 import { FriendshipService } from './friendship.service';
 
-@ApiBearerAuth()
-@ApiTags('Friendships')
 @Controller('friendships')
+@FriendshipControllerDoc()
 export class FriendshipController {
   constructor(private readonly friendshipService: FriendshipService) {}
 

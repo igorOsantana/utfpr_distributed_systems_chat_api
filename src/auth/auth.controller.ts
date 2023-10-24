@@ -6,10 +6,9 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
 import { UserService } from 'src/user/user.service';
-import { Public } from './auth.decorator';
+import { AuthControllerDoc, Public } from './auth.decorator';
 import {
   MeResponseDoc,
   RegisterResponseDoc,
@@ -23,8 +22,8 @@ import {
 } from './auth.presenter';
 import { AuthService } from './auth.service';
 
-@ApiTags('Auth')
 @Controller('auth')
+@AuthControllerDoc()
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

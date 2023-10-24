@@ -1,10 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import {
   ApiErrorRequestItemResponse,
   ApiSuccessRequestItemResponse,
   createApiDocs,
 } from 'src/shared/decorator.shared';
+import { UnauthorizedResponseDoc } from 'src/shared/doc.shared';
 import {
   MePresenter,
   RegisterAuthPresenter,
@@ -13,7 +13,6 @@ import {
 
 // ME
 export const MeResponseDoc = createApiDocs(
-  ApiBearerAuth(),
   ApiSuccessRequestItemResponse({
     model: MePresenter,
     description: 'The user has been successfully found.',
@@ -26,6 +25,7 @@ export const MeResponseDoc = createApiDocs(
     description: 'Request user unauthorized.',
     error: 'You are not authorized',
   }),
+  UnauthorizedResponseDoc(),
 );
 // SIGN IN
 export const SignInResponseDoc = createApiDocs(

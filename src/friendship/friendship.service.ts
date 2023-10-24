@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseService } from 'src/shared/database/database.service';
 import { FriendshipEntity } from './friendship.entity';
 import { FriendshipExceptions } from './friendship.exception';
 

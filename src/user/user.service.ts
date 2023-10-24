@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseService } from 'src/shared/database/database.service';
 import { UserEntity } from './user.entity';
 import { UserExceptions } from './user.exception';
 import { TCreateUser } from './user.interface';
