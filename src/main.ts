@@ -35,6 +35,13 @@ async function bootstrap() {
 function setupSwagger(app: NestExpressApplication) {
   const config = new DocumentBuilder()
     .setTitle('UTFPR Distributed Systems Chat API')
+    .addBearerAuth({
+      name: 'Authorization',
+      type: 'http',
+      scheme: 'bearer',
+      description: 'Enter JWT token',
+      bearerFormat: 'JWT',
+    })
     .setVersion('1.0')
     .build();
 

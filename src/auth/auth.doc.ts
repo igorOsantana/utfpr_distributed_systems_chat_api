@@ -1,9 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import {
-  TApiErrorRequestItemResponseProps,
-  TApiSuccessRequestItemResponseProps,
+  ApiErrorRequestItemResponse,
+  ApiSuccessRequestItemResponse,
+  createApiDocs,
 } from 'src/shared/decorator.shared';
-import { FindByIdOrEmailSuccessResponse } from '../user/user.doc';
 import {
   MePresenter,
   RegisterAuthPresenter,
@@ -11,41 +12,48 @@ import {
 } from './auth.presenter';
 
 // ME
-export const MeSuccessResponse: TApiSuccessRequestItemResponseProps = {
-  ...FindByIdOrEmailSuccessResponse,
-  entity: 'auth/me',
-  model: MePresenter,
-};
-export const MeUnauthorizedResponse: TApiErrorRequestItemResponseProps = {
-  status: HttpStatus.UNAUTHORIZED,
-  description: 'Request user unauthorized.',
-  error: 'You are not authorized',
-};
+export const MeResponseDoc = createApiDocs(
+  ApiBearerAuth(),
+  ApiSuccessRequestItemResponse({
+    model: MePresenter,
+    description: 'The user has been successfully found.',
+    url: 'auth/me',
+    method: 'GET',
+    status: HttpStatus.OK,
+  }),
+  ApiErrorRequestItemResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Request user unauthorized.',
+    error: 'You are not authorized',
+  }),
+);
 // SIGN IN
-export const SignInSuccessResponseDoc: TApiSuccessRequestItemResponseProps = {
-  model: SignInAuthPresenter,
-  description: 'The user has been successfully authenticated.',
-  entity: 'auth/sign-in',
-  method: 'POST',
-  status: HttpStatus.OK,
-};
-export const SignInInvalidCredentialsResponseDoc: TApiErrorRequestItemResponseProps =
-  {
+export const SignInResponseDoc = createApiDocs(
+  ApiSuccessRequestItemResponse({
+    model: SignInAuthPresenter,
+    description: 'The user has been successfully authenticated.',
+    url: 'auth/sign-in',
+    method: 'POST',
+    status: HttpStatus.OK,
+  }),
+  ApiErrorRequestItemResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'The user credentials are invalid.',
     error: 'Email or password is incorrect',
-  };
+  }),
+);
 // REGISTER
-export const RegisterSuccessResponseDoc: TApiSuccessRequestItemResponseProps = {
-  model: RegisterAuthPresenter,
-  description: 'The user has been successfully registered.',
-  entity: 'auth/register',
-  method: 'POST',
-  status: HttpStatus.CREATED,
-};
-export const RegisterEmailAlreadyExistsResponseDoc: TApiErrorRequestItemResponseProps =
-  {
+export const RegisterResponseDoc = createApiDocs(
+  ApiSuccessRequestItemResponse({
+    model: RegisterAuthPresenter,
+    description: 'The user has been successfully registered.',
+    url: 'auth/register',
+    method: 'POST',
+    status: HttpStatus.CREATED,
+  }),
+  ApiErrorRequestItemResponse({
     status: HttpStatus.CONFLICT,
     description: 'The email is already in use.',
     error: 'The email address you provided is already registered',
-  };
+  }),
+);
