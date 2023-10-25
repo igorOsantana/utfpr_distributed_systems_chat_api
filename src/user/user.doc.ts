@@ -12,7 +12,6 @@ export const FindByIdOrEmailResponseDoc = createApiDocs(
   ApiParam({
     name: 'idOrEmail',
     description: 'The ID or email of the user',
-    format: 'uuid',
   }),
   ApiSuccessRequestItemResponse({
     model: UserPresenter,
