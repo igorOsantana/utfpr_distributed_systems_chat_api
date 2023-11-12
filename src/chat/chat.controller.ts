@@ -1,17 +1,23 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
 import { ChatControllersDoc } from './chat.decorator';
-import { CreateResponseDoc, MarkAsReadResponseDoc } from './chat.doc';
-import { CreateChatDto } from './chat.dto';
-import { ChatPresenter } from './chat.presenter';
+import {
+  CreateResponseDoc,
+  FindAllResponseDoc,
+  MarkAsReadResponseDoc,
+} from './chat.doc';
+import { CreateChatDto, FindAllChatDto } from './chat.dto';
+import { ChatListPresenter, ChatPresenter } from './chat.presenter';
 import { ChatUseCases } from './chat.usecase';
 
 @Controller('chats')
@@ -31,7 +37,18 @@ export class ChatControllers {
       senderId: reqUser.id,
     };
     const chat = await this.chatUseCases.create(params);
-    return new ChatPresenter(chat);
+    return new ChatPresenter(chat, reqUser.id);
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @FindAllResponseDoc()
+  async findAll(
+    @RequestUser() reqUser: TRequestUser,
+    @Query() dto: FindAllChatDto,
+  ) {
+    const chats = await this.chatUseCases.findAll(reqUser.id, dto);
+    return new ChatListPresenter(chats, reqUser.id);
   }
 
   @Patch('/mark-as-read/:id')

@@ -1,5 +1,6 @@
 import { Chat, User } from '@prisma/client';
 import { MessageEntity } from 'src/message/message.entity';
+import { TPaginationOutput } from 'src/shared/interface.shared';
 import { UserEntity } from 'src/user/user.entity';
 
 export class ChatEntity {
@@ -20,5 +21,20 @@ export class ChatEntity {
     this.participants = input.participants;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
+  }
+
+  list(
+    chats: Chat[],
+    skipped: number,
+    total: number,
+  ): TPaginationOutput<ChatEntity> {
+    return {
+      list: chats.map((chat) => new ChatEntity(chat)),
+      meta: {
+        taken: chats.length,
+        skipped,
+        total,
+      },
+    };
   }
 }

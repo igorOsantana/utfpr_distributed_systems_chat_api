@@ -4,7 +4,7 @@ import {
   ApiSuccessRequestItemResponse,
   createApiDocs,
 } from 'src/shared/decorator.shared';
-import { ChatPresenter } from './chat.presenter';
+import { ChatListPresenter, ChatPresenter } from './chat.presenter';
 
 // CREATE
 export const CreateResponseDoc = createApiDocs(
@@ -16,9 +16,19 @@ export const CreateResponseDoc = createApiDocs(
     status: HttpStatus.CREATED,
   }),
   ApiErrorRequestItemResponse({
-    status: HttpStatus.NOT_FOUND,
     description: 'The recipient was not found.',
     error: 'Recipient not found',
+    status: HttpStatus.NOT_FOUND,
+  }),
+);
+// FIND ALL
+export const FindAllResponseDoc = createApiDocs(
+  ApiSuccessRequestItemResponse({
+    model: ChatListPresenter,
+    description: 'The chats are listed.',
+    url: 'chats/:userId',
+    method: 'GET',
+    status: HttpStatus.OK,
   }),
 );
 // MARK AS READ
@@ -31,8 +41,8 @@ export const MarkAsReadResponseDoc = createApiDocs(
     status: HttpStatus.NO_CONTENT,
   }),
   ApiErrorRequestItemResponse({
-    status: HttpStatus.NOT_FOUND,
     description: 'The chat was not found.',
     error: 'Chat not found',
+    status: HttpStatus.NOT_FOUND,
   }),
 );

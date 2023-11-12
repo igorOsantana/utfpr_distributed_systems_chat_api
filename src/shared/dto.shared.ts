@@ -1,4 +1,11 @@
+import { IsNumberString, IsOptional } from 'class-validator';
+
 export class PaginationDto {
-  take: number;
-  skip: number;
+  @IsOptional()
+  @IsNumberString()
+  take?: number;
+
+  @IsOptional()
+  @IsNumberString()
+  skip?: number;
 }
