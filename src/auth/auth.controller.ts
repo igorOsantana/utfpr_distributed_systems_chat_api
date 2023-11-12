@@ -7,8 +7,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
-import { UserService } from 'src/user/user.service';
-import { AuthControllerDoc, Public } from './auth.decorator';
+import { UserServices } from 'src/user/user.service';
+import { AuthControllersDoc, Public } from './auth.decorator';
 import {
   MeResponseDoc,
   RegisterResponseDoc,
@@ -20,20 +20,20 @@ import {
   RegisterAuthPresenter,
   SignInAuthPresenter,
 } from './auth.presenter';
-import { AuthService } from './auth.service';
+import { AuthServices } from './auth.service';
 
 @Controller('auth')
-@AuthControllerDoc()
-export class AuthController {
+@AuthControllersDoc()
+export class AuthControllers {
   constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
+    private readonly authServices: AuthServices,
+    private readonly userServices: UserServices,
   ) {}
 
   @Get('/me')
   @MeResponseDoc()
   async me(@RequestUser() reqUser: TRequestUser) {
-    const user = await this.userService.findById(reqUser.id);
+    const user = await this.userServices.findById(reqUser.id);
     return new MePresenter(user);
   }
 
@@ -43,7 +43,7 @@ export class AuthController {
   @SignInResponseDoc()
   async signIn(@Body() dto: SignInAuthDto) {
     const { email, password } = dto;
-    const accessToken = await this.authService.signIn(email, password);
+    const accessToken = await this.authServices.signIn(email, password);
     return new SignInAuthPresenter(accessToken);
   }
 
@@ -51,7 +51,7 @@ export class AuthController {
   @Post('/register')
   @RegisterResponseDoc()
   async register(@Body() dto: RegisterAuthDto) {
-    const accessToken = await this.authService.register(dto);
+    const accessToken = await this.authServices.register(dto);
     return new RegisterAuthPresenter(accessToken);
   }
 }

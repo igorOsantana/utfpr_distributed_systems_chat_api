@@ -6,7 +6,7 @@ import { InternalServerErrorResponseDoc } from 'src/shared/doc.shared';
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
-export const AuthControllerDoc = createApiDocs(
+export const AuthControllersDoc = createApiDocs(
   ApiTags('Authentication'),
   InternalServerErrorResponseDoc(),
 );

@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   id        String   @id @default(uuid())
   name      String   @db.VarChar(255)
   email     String   @unique
@@ -15,8 +15,12 @@ model Users {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  friends  Friendships[] @relation("FriendsSent")
-  friendOf Friendships[] @relation("FriendsReceived")
+  sentFriendRequests     Friendship[] @relation("sender")
+  receivedFriendRequests Friendship[] @relation("recipient")
+  messages               Message[]
+  chats                  Chat[]       @relation("chats")
+
+  @@map("users")
 }
 
 enum FriendshipStatus {
@@ -25,15 +29,43 @@ enum FriendshipStatus {
   DECLINED
 }
 
-model Friendships {
+model Friendship {
   senderId    String
   recipientId String
   status      FriendshipStatus @default(PENDING)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  sender    Users @relation("FriendsSent", fields: [senderId], references: [id])
-  recipient Users @relation("FriendsReceived", fields: [recipientId], references: [id])
+  sender    User @relation("sender", fields: [senderId], references: [id])
+  recipient User @relation("recipient", fields: [recipientId], references: [id])
 
   @@id([senderId, recipientId])
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  read      Boolean  @default(false)
+  lastMsg   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  participants User[]    @relation("chats")
+  messages     Message[]
+
+  @@map("chats")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sender   User   @relation(fields: [senderId], references: [id])
+  senderId String
+
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  chatId String
+
+  @@map("messages")
 }

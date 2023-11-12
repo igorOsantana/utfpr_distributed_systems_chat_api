@@ -5,7 +5,7 @@ import {
   UnauthorizedResponseDoc,
 } from 'src/shared/doc.shared';
 
-export const FriendshipControllerDoc = createApiDocs(
+export const FriendshipControllersDoc = createApiDocs(
   ApiTags('Friendships'),
   UnauthorizedResponseDoc(),
   InternalServerErrorResponseDoc(),

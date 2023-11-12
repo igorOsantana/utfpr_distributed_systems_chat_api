@@ -10,13 +10,13 @@ import { UserPresenter } from './user.presenter';
 // FIND BY ID OR EMAIL
 export const FindByIdOrEmailResponseDoc = createApiDocs(
   ApiParam({
-    name: 'idOrEmail',
+    name: 'id-or-email',
     description: 'The ID or email of the user',
   }),
   ApiSuccessRequestItemResponse({
     model: UserPresenter,
     description: 'The user has been successfully found.',
-    url: 'users/:idOrEmail',
+    url: 'users/:id-or-email',
     method: 'GET',
     status: HttpStatus.OK,
   }),

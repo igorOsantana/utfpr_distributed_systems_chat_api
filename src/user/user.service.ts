@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/shared/database/database.service';
+import { DatabaseServices } from 'src/shared/database/database.service';
 import { UserEntity } from './user.entity';
 import { UserExceptions } from './user.exception';
-import { TCreateUser } from './user.interface';
+import { TCreateUserInput } from './user.interface';
 
 @Injectable()
-export class UserService {
-  constructor(private readonly databaseService: DatabaseService) {}
+export class UserServices {
+  constructor(private readonly databaseServices: DatabaseServices) {}
 
-  async create(input: TCreateUser): Promise<UserEntity> {
+  async create(input: TCreateUserInput): Promise<UserEntity> {
     try {
-      return await this.databaseService.users.create({
+      return await this.databaseServices.user.create({
         data: input,
       });
     } catch (error) {
@@ -20,7 +20,7 @@ export class UserService {
 
   async findById(id: string): Promise<UserEntity> {
     try {
-      const user = await this.databaseService.users.findUnique({
+      const user = await this.databaseServices.user.findUnique({
         where: { id },
       });
 
@@ -40,7 +40,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<UserEntity> {
     try {
-      const user = await this.databaseService.users.findUnique({
+      const user = await this.databaseServices.user.findUnique({
         where: { email },
       });
 
@@ -60,7 +60,7 @@ export class UserService {
 
   async findByIdOrEmail(idOrEmail: string): Promise<UserEntity> {
     try {
-      const user = await this.databaseService.users.findFirst({
+      const user = await this.databaseServices.user.findFirst({
         where: {
           OR: [{ id: idOrEmail }, { email: idOrEmail }],
         },

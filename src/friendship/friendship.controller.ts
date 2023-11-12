@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
-import { FriendshipControllerDoc } from './friendship.decorator';
+import { FriendshipControllersDoc } from './friendship.decorator';
 import {
   AcceptResponseDoc,
   CreateResponseDoc,
@@ -21,18 +21,18 @@ import {
   MyFriendsFriendshipPresenter,
   RequestsFriendshipPresenter,
 } from './friendship.presenter';
-import { FriendshipService } from './friendship.service';
+import { FriendshipServices } from './friendship.service';
 
 @Controller('friendships')
-@FriendshipControllerDoc()
-export class FriendshipController {
-  constructor(private readonly friendshipService: FriendshipService) {}
+@FriendshipControllersDoc()
+export class FriendshipControllers {
+  constructor(private readonly friendshipService: FriendshipServices) {}
 
-  @Post('/:recipientId')
+  @Post('/:recipient-id')
   @CreateResponseDoc()
   async create(
     @RequestUser() reqUser: TRequestUser,
-    @Param('recipientId')
+    @Param('recipient-id')
     recipientId: string,
   ) {
     const pendingFriendship = await this.friendshipService.create(
@@ -42,21 +42,21 @@ export class FriendshipController {
     return new FriendshipPresenter(pendingFriendship);
   }
 
-  @Patch('/accept/:senderId')
+  @Patch('/accept/:sender-id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @AcceptResponseDoc()
   async accept(
-    @Param('senderId') senderId: string,
+    @Param('sender-id') senderId: string,
     @RequestUser() reqUser: TRequestUser,
   ) {
     await this.friendshipService.accept(senderId, reqUser.id);
   }
 
-  @Patch('/decline/:senderId')
+  @Patch('/decline/:sender-id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeclineResponseDoc()
   async decline(
-    @Param('senderId') senderId: string,
+    @Param('sender-id') senderId: string,
     @RequestUser() reqUser: TRequestUser,
   ) {
     await this.friendshipService.decline(senderId, reqUser.id);

@@ -12,9 +12,10 @@ import {
   MyFriendsFriendshipPresenter,
   RequestsFriendshipPresenter,
 } from './friendship.presenter';
+
 // SHARED
 const SenderIdParam: ApiParamOptions = {
-  name: 'senderId',
+  name: 'sender-id',
   description: 'The ID of the user who sent the friendship request',
   format: 'uuid',
 };
@@ -26,7 +27,7 @@ const NotExistsError: TApiErrorRequestItemResponseProps = {
 // CREATE
 export const CreateResponseDoc = createApiDocs(
   ApiParam({
-    name: 'recipientId',
+    name: 'recipient-id',
     description: 'The ID of the user who will receive the friendship request',
     format: 'uuid',
   }),
@@ -34,8 +35,8 @@ export const CreateResponseDoc = createApiDocs(
     model: FriendshipPresenter,
     description:
       'A request for a new friendship has been successfully created. The status of the friendship is PENDING.',
-    url: 'friendships/:recipientId',
-    method: 'GET',
+    url: 'friendships/:recipient-id',
+    method: 'POST',
     status: HttpStatus.CREATED,
   }),
   ApiErrorRequestItemResponse({
@@ -49,7 +50,7 @@ export const AcceptResponseDoc = createApiDocs(
   ApiParam(SenderIdParam),
   ApiSuccessRequestItemResponseNoContent({
     description: 'The friendship request has been successfully accepted',
-    url: 'friendships/accept/:senderId',
+    url: 'friendships/accept/:sender-id',
     method: 'PATCH',
   }),
   ApiErrorRequestItemResponse(NotExistsError),
@@ -59,7 +60,7 @@ export const DeclineResponseDoc = createApiDocs(
   ApiParam(SenderIdParam),
   ApiSuccessRequestItemResponseNoContent({
     description: 'The friendship request has been successfully declined',
-    url: 'friendships/decline/:senderId',
+    url: 'friendships/decline/:sender-id',
     method: 'PATCH',
   }),
   ApiErrorRequestItemResponse(NotExistsError),

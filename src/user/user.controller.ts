@@ -1,17 +1,17 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { UserControllerDoc } from './user.decorator';
+import { UserControllersDoc } from './user.decorator';
 import { FindByIdOrEmailResponseDoc } from './user.doc';
 import { UserPresenter } from './user.presenter';
-import { UserService } from './user.service';
+import { UserServices } from './user.service';
 
 @Controller('users')
-@UserControllerDoc()
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+@UserControllersDoc()
+export class UserControllers {
+  constructor(private readonly userService: UserServices) {}
 
-  @Get('/:idOrEmail')
+  @Get('/:id-or-email')
   @FindByIdOrEmailResponseDoc()
-  async findByIdOrEmail(@Param('idOrEmail') idOrEmail: string) {
+  async findByIdOrEmail(@Param('id-or-email') idOrEmail: string) {
     const user = await this.userService.findByIdOrEmail(idOrEmail);
     return new UserPresenter(user);
   }

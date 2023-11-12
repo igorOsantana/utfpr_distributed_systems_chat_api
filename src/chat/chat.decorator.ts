@@ -5,8 +5,8 @@ import {
   UnauthorizedResponseDoc,
 } from 'src/shared/doc.shared';
 
-export const UserControllersDoc = createApiDocs(
-  ApiTags('Users'),
+export const ChatControllersDoc = createApiDocs(
+  ApiTags('Chats'),
   UnauthorizedResponseDoc(),
   InternalServerErrorResponseDoc(),
 );
