@@ -14,3 +14,12 @@ export class RequestPresenter<T> {
   @ApiProperty({ example: '12ms' })
   duration: string;
 }
+
+export class PaginationPresenter {
+  @ApiProperty({ example: 10 })
+  taken: number;
+  @ApiProperty({ example: 10 })
+  skipped: number;
+  @ApiProperty({ example: 29 })
+  total: number;
+}

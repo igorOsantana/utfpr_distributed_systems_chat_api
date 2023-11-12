@@ -1,4 +1,4 @@
-export type TCreateMessage = {
+export type TCreateMessageInput = {
   content: string;
   ownerId: string;
   chatId: string;

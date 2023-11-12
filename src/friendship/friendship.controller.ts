@@ -28,11 +28,11 @@ import { FriendshipServices } from './friendship.service';
 export class FriendshipControllers {
   constructor(private readonly friendshipService: FriendshipServices) {}
 
-  @Post('/:recipient-id')
+  @Post('/:recipientId')
   @CreateResponseDoc()
   async create(
     @RequestUser() reqUser: TRequestUser,
-    @Param('recipient-id')
+    @Param('recipientId')
     recipientId: string,
   ) {
     const pendingFriendship = await this.friendshipService.create(
@@ -42,21 +42,21 @@ export class FriendshipControllers {
     return new FriendshipPresenter(pendingFriendship);
   }
 
-  @Patch('/accept/:sender-id')
+  @Patch('/accept/:senderId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @AcceptResponseDoc()
   async accept(
-    @Param('sender-id') senderId: string,
+    @Param('senderId') senderId: string,
     @RequestUser() reqUser: TRequestUser,
   ) {
     await this.friendshipService.accept(senderId, reqUser.id);
   }
 
-  @Patch('/decline/:sender-id')
+  @Patch('/decline/:senderId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeclineResponseDoc()
   async decline(
-    @Param('sender-id') senderId: string,
+    @Param('senderId') senderId: string,
     @RequestUser() reqUser: TRequestUser,
   ) {
     await this.friendshipService.decline(senderId, reqUser.id);

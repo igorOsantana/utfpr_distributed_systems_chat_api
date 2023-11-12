@@ -9,9 +9,9 @@ import { UserServices } from './user.service';
 export class UserControllers {
   constructor(private readonly userService: UserServices) {}
 
-  @Get('/:id-or-email')
+  @Get('/:idOrEmail')
   @FindByIdOrEmailResponseDoc()
-  async findByIdOrEmail(@Param('id-or-email') idOrEmail: string) {
+  async findByIdOrEmail(@Param('idOrEmail') idOrEmail: string) {
     const user = await this.userService.findByIdOrEmail(idOrEmail);
     return new UserPresenter(user);
   }

@@ -14,4 +14,12 @@ export class MessageExceptions extends ApiException {
   findAll(err?: unknown) {
     return new ApiException().internal('[MessageService - FindAll]', err);
   }
+
+  chatNotFound(err?: unknown) {
+    return new ApiException().notFound(
+      MessageExceptions.ID,
+      'Chat not found',
+      err,
+    );
+  }
 }

@@ -4,23 +4,23 @@ import { PaginationInputHelper } from 'src/shared/helpers.shared';
 import { TPaginationInput } from 'src/shared/interface.shared';
 import { MessageEntity } from './message.entity';
 import { MessageExceptions } from './message.exception';
-import { TCreateMessage } from './message.interface';
+import { TCreateMessageInput } from './message.interface';
 
 @Injectable()
-export class MessageService {
-  constructor(private readonly databaseService: DatabaseServices) {}
+export class MessageServices {
+  constructor(private readonly databaseServices: DatabaseServices) {}
 
-  async create(input: TCreateMessage) {
+  async create(input: TCreateMessageInput) {
     try {
-      const [message] = await this.databaseService.$transaction([
-        this.databaseService.message.create({
+      const [message] = await this.databaseServices.$transaction([
+        this.databaseServices.message.create({
           data: {
             content: input.content,
             chat: { connect: { id: input.chatId } },
             sender: { connect: { id: input.ownerId } },
           },
         }),
-        this.databaseService.chat.update({
+        this.databaseServices.chat.update({
           where: { id: input.chatId },
           data: { lastMsg: input.content },
         }),
@@ -35,12 +35,12 @@ export class MessageService {
     const { take, skip } = PaginationInputHelper.parse(paginationParams);
     try {
       const [messages, total] = await Promise.all([
-        this.databaseService.message.findMany({
+        this.databaseServices.message.findMany({
           where: { chatId },
           take,
           skip,
         }),
-        this.databaseService.message.count({
+        this.databaseServices.message.count({
           where: { chatId },
         }),
       ]);
