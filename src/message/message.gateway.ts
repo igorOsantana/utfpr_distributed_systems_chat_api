@@ -9,7 +9,10 @@ import { ChatUseCases } from 'src/chat/chat.usecase';
 import { TEventSendNewMessageInput } from './message.interface';
 import { MessageUseCases } from './message.usecase';
 
-@WebSocketGateway(undefined, { path: '/chats', transports: ['websocket'] })
+@WebSocketGateway(undefined, {
+  transports: ['websocket'],
+  cors: '*',
+})
 export class MessageWebSocketGateway implements OnGatewayConnection {
   private connectedClients: Map<string, Socket> = new Map();
   constructor(
@@ -19,10 +22,12 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
   ) {}
 
   async handleConnection(client: Socket) {
+    console.log('trying to connecting');
     const userId = await this.extractUserIdFromSocket(client);
 
     if (userId) {
       this.connectedClients.set(userId, client);
+      console.log('connected: ', userId);
     } else {
       console.error('Missing token.');
       client.disconnect();
@@ -40,6 +45,7 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
         ...payload,
         ownerId: userId,
       });
+      client.emit('receiveNewMessage', newMessage);
       if (recipientClient) {
         recipientClient.emit('receiveNewMessage', newMessage);
       }
@@ -51,8 +57,8 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
   private async extractUserIdFromSocket(
     socket: Socket,
   ): Promise<string | null> {
-    const token = socket.handshake.auth.token;
-    if (token) {
+    const token = socket.handshake.query.token;
+    if (token && typeof token === 'string') {
       const payload = await this.authServices.verifyToken(token);
       return payload.sub;
     }
