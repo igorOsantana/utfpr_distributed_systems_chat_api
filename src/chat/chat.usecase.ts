@@ -36,6 +36,10 @@ export class ChatUseCases {
     return await this.chatServices.findAll(userId, paginationInput);
   }
 
+  async findById(id: string) {
+    return await this.chatServices.findById(id);
+  }
+
   async markAsRead(id: string, reqUserId: string) {
     const valid = await this.validateByParticipantId(id, reqUserId);
 

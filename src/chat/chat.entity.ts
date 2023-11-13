@@ -37,4 +37,10 @@ export class ChatEntity {
       },
     };
   }
+
+  getRecipient(reqUserId: string) {
+    return this.participants.find(
+      (participant) => participant.id !== reqUserId,
+    );
+  }
 }

@@ -33,16 +33,16 @@ export class MessageServices {
 
   async findAll(chatId: string, paginationParams: TPaginationInput) {
     const { take, skip } = PaginationInputHelper.parse(paginationParams);
+    const queryWhere = { where: { chatId } };
     try {
       const [messages, total] = await Promise.all([
         this.databaseServices.message.findMany({
-          where: { chatId },
+          ...queryWhere,
+          orderBy: { createdAt: 'desc' },
           take,
           skip,
         }),
-        this.databaseServices.message.count({
-          where: { chatId },
-        }),
+        this.databaseServices.message.count(queryWhere),
       ]);
       return new MessageEntity().list(messages, skip, total);
     } catch (error) {

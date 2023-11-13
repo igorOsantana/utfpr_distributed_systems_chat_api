@@ -3,3 +3,8 @@ export type TCreateMessageInput = {
   ownerId: string;
   chatId: string;
 };
+
+export type TEventSendNewMessageInput = {
+  content: string;
+  chatId: string;
+};

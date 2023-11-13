@@ -91,4 +91,15 @@ export class AuthServices {
       throw new AuthExceptions().register(error);
     }
   }
+
+  async verifyToken(token: string) {
+    try {
+      return await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
 }
