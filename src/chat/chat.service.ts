@@ -52,6 +52,23 @@ export class ChatServices {
     }
   }
 
+  async findByParticipants(ids: string[]) {
+    try {
+      const chat = await this.databaseService.chat.findFirst({
+        where: { participants: { every: { id: { in: ids } } } },
+        include: { participants: true },
+      });
+
+      if (!chat) {
+        throw new ChatExceptions().notFound();
+      }
+
+      return new ChatEntity(chat);
+    } catch (error) {
+      throw new ChatExceptions().find(error);
+    }
+  }
+
   async findAll(userId: string, paginationInput: TPaginationInput) {
     try {
       const { take, skip } = PaginationInputHelper.parse(paginationInput);

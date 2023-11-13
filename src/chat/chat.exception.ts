@@ -38,4 +38,12 @@ export class ChatExceptions extends ApiException {
       err,
     );
   }
+
+  alreadyExists(err?: unknown) {
+    return new ApiException().conflict(
+      ChatExceptions.ID,
+      'Chat already exists',
+      err,
+    );
+  }
 }

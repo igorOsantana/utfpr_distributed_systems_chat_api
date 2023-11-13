@@ -16,6 +16,11 @@ export const CreateResponseDoc = createApiDocs(
     status: HttpStatus.CREATED,
   }),
   ApiErrorRequestItemResponse({
+    description: 'The chat already exists.',
+    error: 'Chat already exists',
+    status: HttpStatus.CONFLICT,
+  }),
+  ApiErrorRequestItemResponse({
     description: 'The recipient was not found.',
     error: 'Recipient not found',
     status: HttpStatus.NOT_FOUND,

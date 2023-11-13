@@ -13,6 +13,15 @@ export class ChatUseCases {
   ) {}
 
   async create(input: TCreateChatInput) {
+    const chatAlreadyExists = await this.chatAlreadyExists([
+      input.senderId,
+      input.recipientId,
+    ]);
+
+    if (chatAlreadyExists) {
+      throw new ChatExceptions().alreadyExists();
+    }
+
     const recipientExists = await this.recipientExists(input.recipientId);
 
     if (!recipientExists) {
@@ -20,6 +29,16 @@ export class ChatUseCases {
     }
 
     return await this.chatServices.create(input);
+  }
+
+  private async chatAlreadyExists(participants: string[]) {
+    try {
+      const chat = await this.chatServices.findByParticipants(participants);
+      return Boolean(chat);
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 
   private async recipientExists(recipientId: string) {
