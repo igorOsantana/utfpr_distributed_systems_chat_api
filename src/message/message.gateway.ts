@@ -51,10 +51,8 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
   private async extractUserIdFromSocket(
     socket: Socket,
   ): Promise<string | null> {
-    const handshakeData = socket.request;
-
-    if (handshakeData.headers && handshakeData.headers.authorization) {
-      const token = handshakeData.headers.authorization.split(' ')[1];
+    const token = socket.handshake.auth.token;
+    if (token) {
       const payload = await this.authServices.verifyToken(token);
       return payload.sub;
     }
