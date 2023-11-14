@@ -38,7 +38,7 @@ export class MessageServices {
       const [messages, total] = await Promise.all([
         this.databaseServices.message.findMany({
           ...queryWhere,
-          orderBy: { createdAt: 'asc' },
+          orderBy: { createdAt: 'desc' },
           take,
           skip,
         }),
