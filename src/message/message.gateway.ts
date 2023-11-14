@@ -6,6 +6,7 @@ import {
 import { Socket } from 'socket.io';
 import { AuthServices } from 'src/auth/auth.service';
 import { TEventCreateNewChatInput } from 'src/chat/chat.interface';
+import { ChatPresenter } from 'src/chat/chat.presenter';
 import { ChatUseCases } from 'src/chat/chat.usecase';
 import { TEventSendNewMessageInput } from './message.interface';
 import { MessageUseCases } from './message.usecase';
@@ -45,9 +46,14 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
       });
       const recipient = newChat.getRecipient(userId);
       const recipientClient = this.connectedClients.get(recipient.id);
-      client.emit('receiveNewChat', newChat);
+
+      client.emit('receiveNewChat', new ChatPresenter(newChat, userId));
+
       if (recipientClient) {
-        recipientClient.emit('receiveNewChat', newChat);
+        recipientClient.emit(
+          'receiveNewChat',
+          new ChatPresenter(newChat, userId),
+        );
       }
     } catch (error) {
       console.error(error);
