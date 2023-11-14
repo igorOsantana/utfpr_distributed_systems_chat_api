@@ -52,7 +52,7 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
       if (recipientClient) {
         recipientClient.emit(
           'receiveNewChat',
-          new ChatPresenter(newChat, userId),
+          new ChatPresenter(newChat, recipient.id),
         );
       }
     } catch (error) {
@@ -71,7 +71,9 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
         ...payload,
         ownerId: userId,
       });
+
       client.emit('receiveNewMessage', newMessage);
+
       if (recipientClient) {
         recipientClient.emit('receiveNewMessage', newMessage);
       }
