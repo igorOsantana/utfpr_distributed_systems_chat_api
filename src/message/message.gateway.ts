@@ -34,8 +34,14 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
       console.log('connected: ', userId);
     } else {
       console.error('Missing token.');
-      client.disconnect();
+      client.disconnect(true);
     }
+  }
+
+  async handleDisconnect(client: Socket) {
+    const userId = await this.extractUserIdFromSocket(client);
+    this.connectedClients.delete(userId);
+    console.log('disconnected: ', userId);
   }
 
   @SubscribeMessage('createNewChat')
