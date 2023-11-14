@@ -66,15 +66,13 @@ export class ChatUseCases {
       throw new ChatExceptions().notFound();
     }
 
-    await this.chatServices.markAsRead(id);
+    await this.chatServices.markAsRead(id, reqUserId);
   }
 
   private async validateByParticipantId(id: string, participantId: string) {
     try {
       const chat = await this.chatServices.findById(id);
-      return chat.participants.some(
-        (participant) => participant.id === participantId,
-      );
+      return chat.isParticipant(participantId);
     } catch (error) {
       console.error(error);
       return false;

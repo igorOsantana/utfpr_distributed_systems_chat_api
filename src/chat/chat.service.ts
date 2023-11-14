@@ -16,7 +16,12 @@ export class ChatServices {
         data: {
           lastMsg: params.msgContent,
           participants: {
-            connect: [{ id: params.senderId }, { id: params.recipientId }],
+            createMany: {
+              data: [
+                { userId: params.senderId, read: true },
+                { userId: params.recipientId, read: false },
+              ],
+            },
           },
           messages: {
             create: {
@@ -26,7 +31,7 @@ export class ChatServices {
           },
         },
         include: {
-          participants: true,
+          participants: { include: { user: true } },
         },
       });
       return new ChatEntity(chat);
@@ -39,7 +44,7 @@ export class ChatServices {
     try {
       const chat = await this.databaseService.chat.findUnique({
         where: { id },
-        include: { participants: true },
+        include: { participants: { include: { user: true } } },
       });
 
       if (!chat) {
@@ -55,8 +60,8 @@ export class ChatServices {
   async findByParticipants(ids: string[]) {
     try {
       const chat = await this.databaseService.chat.findFirst({
-        where: { participants: { every: { id: { in: ids } } } },
-        include: { participants: true },
+        where: { participants: { every: { userId: { in: ids } } } },
+        include: { participants: { include: { user: true } } },
       });
 
       if (!chat) {
@@ -74,14 +79,14 @@ export class ChatServices {
       const { take, skip } = PaginationInputHelper.parse(paginationInput);
       const queryWhere = {
         where: {
-          participants: { some: { id: userId } },
+          participants: { some: { userId } },
         },
       };
       const [chats, total] = await this.databaseService.$transaction([
         this.databaseService.chat.findMany({
           ...queryWhere,
           include: {
-            participants: true,
+            participants: { include: { user: true } },
           },
           take,
           skip,
@@ -94,11 +99,18 @@ export class ChatServices {
     }
   }
 
-  async markAsRead(id: string) {
+  async markAsRead(id: string, userId: string) {
     try {
       await this.databaseService.chat.update({
         where: { id },
-        data: { read: true },
+        data: {
+          participants: {
+            update: {
+              where: { chatId_userId: { chatId: id, userId } },
+              data: { read: true },
+            },
+          },
+        },
       });
     } catch (error) {
       throw new ChatExceptions().read(error);

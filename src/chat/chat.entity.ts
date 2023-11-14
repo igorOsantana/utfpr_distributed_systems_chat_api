@@ -1,5 +1,4 @@
-import { Chat, User } from '@prisma/client';
-import { MessageEntity } from 'src/message/message.entity';
+import { Chat, User, UsersOnChats } from '@prisma/client';
 import { TPaginationOutput } from 'src/shared/interface.shared';
 import { UserEntity } from 'src/user/user.entity';
 
@@ -7,18 +6,30 @@ export class ChatEntity {
   id: string;
   read: boolean;
   lastMessage: string;
-  messages: MessageEntity[];
-  participants: UserEntity[];
+  recipient: UserEntity;
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(input?: Chat & Partial<{ participants?: User[] }>) {
+  private participantsInfo: {
+    userId: string;
+    user: UserEntity;
+    read: boolean;
+  }[] = null;
+
+  constructor(
+    input?: Chat & { participants?: (UsersOnChats & { user: User })[] },
+  ) {
     if (!input) return;
 
     this.id = input.id;
-    this.read = input.read;
     this.lastMessage = input.lastMsg;
-    this.participants = input.participants;
+    this.participantsInfo = input.participants.map(
+      ({ userId, user, read }) => ({
+        userId,
+        user,
+        read,
+      }),
+    );
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
   }
@@ -38,9 +49,17 @@ export class ChatEntity {
     };
   }
 
-  getRecipient(reqUserId: string) {
-    return this.participants.find(
-      (participant) => participant.id !== reqUserId,
-    );
+  setDataByReqUserId(reqUserId: string) {
+    for (const info of this.participantsInfo) {
+      if (info.userId !== reqUserId) {
+        this.recipient = info.user;
+      } else if (info.userId === reqUserId) {
+        this.read = info.read;
+      }
+    }
+  }
+
+  isParticipant(participantId: string) {
+    return this.participantsInfo.some(({ userId }) => userId === participantId);
   }
 }

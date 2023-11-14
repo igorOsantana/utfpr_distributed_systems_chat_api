@@ -19,17 +19,12 @@ export class ChatPresenter {
   updatedAt: Date;
 
   constructor(chat: ChatEntity, reqUserId: string) {
-    const recipient = chat.participants?.find(
-      (participant) => participant.id !== reqUserId,
-    );
-
-    if (recipient) {
-      this.recipient = new UserPresenter(recipient);
-    }
+    chat.setDataByReqUserId(reqUserId);
 
     this.id = chat.id;
     this.read = chat.read;
     this.lastMessage = chat.lastMessage;
+    this.recipient = new UserPresenter(chat.recipient);
     this.createdAt = chat.createdAt;
     this.updatedAt = chat.updatedAt;
   }

@@ -5,9 +5,11 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthServices } from 'src/auth/auth.service';
+import { ChatEntity } from 'src/chat/chat.entity';
 import { TEventCreateNewChatInput } from 'src/chat/chat.interface';
 import { ChatPresenter } from 'src/chat/chat.presenter';
 import { ChatUseCases } from 'src/chat/chat.usecase';
+import { MessageEntity } from './message.entity';
 import { TEventSendNewMessageInput } from './message.interface';
 import { MessageUseCases } from './message.usecase';
 
@@ -39,24 +41,43 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
   @SubscribeMessage('createNewChat')
   async createNewChat(client: Socket, payload: TEventCreateNewChatInput) {
     try {
-      const userId = await this.extractUserIdFromSocket(client);
+      const reqUserId = await this.extractUserIdFromSocket(client);
+
       const newChat = await this.chatUseCases.create({
         ...payload,
-        senderId: userId,
+        senderId: reqUserId,
       });
-      const recipient = newChat.getRecipient(userId);
-      const recipientClient = this.connectedClients.get(recipient.id);
+      newChat.setDataByReqUserId(reqUserId);
 
-      client.emit('receiveNewChat', new ChatPresenter(newChat, userId));
+      const recipientId = newChat.recipient.id;
+      const recipientClient = this.connectedClients.get(recipientId);
 
-      if (recipientClient) {
-        recipientClient.emit(
-          'receiveNewChat',
-          new ChatPresenter(newChat, recipient.id),
-        );
-      }
+      this.emitReceiveNewChatEvent(
+        client,
+        newChat,
+        reqUserId,
+        recipientClient,
+        recipientId,
+      );
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  private emitReceiveNewChatEvent(
+    client: Socket,
+    newChat: ChatEntity,
+    reqUserId: string,
+    recipientClient: Socket,
+    recipientId: string,
+  ) {
+    client.emit('receiveNewChat', new ChatPresenter(newChat, reqUserId));
+
+    if (recipientClient) {
+      recipientClient.emit(
+        'receiveNewChat',
+        new ChatPresenter(newChat, recipientId),
+      );
     }
   }
 
@@ -64,21 +85,31 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
   async sendNewMessage(client: Socket, payload: TEventSendNewMessageInput) {
     try {
       const userId = await this.extractUserIdFromSocket(client);
+
       const chat = await this.chatUseCases.findById(payload.chatId);
-      const recipient = chat.getRecipient(userId);
-      const recipientClient = this.connectedClients.get(recipient.id);
+      chat.setDataByReqUserId(userId);
+
+      const recipientClient = this.connectedClients.get(chat.recipient.id);
       const newMessage = await this.messageUseCases.send({
         ...payload,
         ownerId: userId,
       });
 
-      client.emit('receiveNewMessage', newMessage);
-
-      if (recipientClient) {
-        recipientClient.emit('receiveNewMessage', newMessage);
-      }
+      this.emitReceiveNewMessageEvent(client, newMessage, recipientClient);
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  private emitReceiveNewMessageEvent(
+    client: Socket,
+    newMessage: MessageEntity,
+    recipientClient: Socket,
+  ) {
+    client.emit('receiveNewMessage', newMessage);
+
+    if (recipientClient) {
+      recipientClient.emit('receiveNewMessage', newMessage);
     }
   }
 
