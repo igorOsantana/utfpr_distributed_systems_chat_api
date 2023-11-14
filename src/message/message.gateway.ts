@@ -5,6 +5,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthServices } from 'src/auth/auth.service';
+import { TEventCreateNewChatInput } from 'src/chat/chat.interface';
 import { ChatUseCases } from 'src/chat/chat.usecase';
 import { TEventSendNewMessageInput } from './message.interface';
 import { MessageUseCases } from './message.usecase';
@@ -31,6 +32,25 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
     } else {
       console.error('Missing token.');
       client.disconnect();
+    }
+  }
+
+  @SubscribeMessage('createNewChat')
+  async createNewChat(client: Socket, payload: TEventCreateNewChatInput) {
+    try {
+      const userId = await this.extractUserIdFromSocket(client);
+      const newChat = await this.chatUseCases.create({
+        ...payload,
+        senderId: userId,
+      });
+      const recipient = newChat.getRecipient(userId);
+      const recipientClient = this.connectedClients.get(recipient.id);
+      client.emit('receiveNewChat', newChat);
+      if (recipientClient) {
+        recipientClient.emit('receiveNewChat', newChat);
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 
