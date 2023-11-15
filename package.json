@@ -6,11 +6,13 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prebuild": "rimraf dist && npm run db:generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
+    "prestart:prod": "npm run db:deploy",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
@@ -19,6 +21,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:migrate": "npx prisma migrate dev --name init --schema src/shared/database/prisma/schema.prisma",
+    "db:generate": "npx prisma generate --schema src/shared/database/prisma/schema.prisma",
+    "db:deploy": "npx prisma migrate deploy --schema src/shared/database/prisma/schema.prisma",
     "db:push": "npx prisma db push --schema src/shared/database/prisma/schema.prisma",
     "db:studio": "npx prisma studio --schema src/shared/database/prisma/schema.prisma"
   },
@@ -37,6 +41,7 @@
     "class-validator": "^0.14.0",
     "helmet": "^7.0.0",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "^5.0.5",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
