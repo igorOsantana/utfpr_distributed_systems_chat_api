@@ -1,6 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { UserControllersDoc } from './user.decorator';
-import { FindByIdOrEmailResponseDoc } from './user.doc';
+import { FindByIdOrEmailResponseDoc, UserControllersDoc } from './user.doc';
 import { UserPresenter } from './user.presenter';
 import { UserServices } from './user.service';
 

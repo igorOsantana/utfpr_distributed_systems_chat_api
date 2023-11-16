@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { ApiParam, ApiParamOptions } from '@nestjs/swagger';
+import { ApiParam, ApiParamOptions, ApiTags } from '@nestjs/swagger';
 import {
   ApiErrorRequestItemResponse,
   ApiSuccessRequestItemResponse,
@@ -8,10 +8,21 @@ import {
   createApiDocs,
 } from 'src/shared/decorator.shared';
 import {
+  InternalServerErrorResponseDoc,
+  UnauthorizedResponseDoc,
+} from 'src/shared/doc.shared';
+import {
   FriendshipPresenter,
   MyFriendsFriendshipPresenter,
   RequestsFriendshipPresenter,
 } from './friendship.presenter';
+
+// CONTROLLERS
+export const FriendshipControllersDoc = createApiDocs(
+  ApiTags('Friendships'),
+  UnauthorizedResponseDoc(),
+  InternalServerErrorResponseDoc(),
+);
 
 // SHARED
 const SenderIdParam: ApiParamOptions = {

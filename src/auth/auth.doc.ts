@@ -1,16 +1,25 @@
 import { HttpStatus } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import {
   ApiErrorRequestItemResponse,
   ApiSuccessRequestItemResponse,
   createApiDocs,
 } from 'src/shared/decorator.shared';
-import { UnauthorizedResponseDoc } from 'src/shared/doc.shared';
+import {
+  InternalServerErrorResponseDoc,
+  UnauthorizedResponseDoc,
+} from 'src/shared/doc.shared';
 import {
   MePresenter,
   RegisterAuthPresenter,
   SignInAuthPresenter,
 } from './auth.presenter';
 
+// CONTROLLERS
+export const AuthControllersDoc = createApiDocs(
+  ApiTags('Authentication'),
+  InternalServerErrorResponseDoc(),
+);
 // ME
 export const MeResponseDoc = createApiDocs(
   ApiSuccessRequestItemResponse({

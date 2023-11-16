@@ -1,11 +1,22 @@
 import { HttpStatus } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import {
   ApiErrorRequestItemResponse,
   ApiSuccessRequestItemResponse,
   createApiDocs,
 } from 'src/shared/decorator.shared';
+import {
+  InternalServerErrorResponseDoc,
+  UnauthorizedResponseDoc,
+} from 'src/shared/doc.shared';
 import { ChatListPresenter, ChatPresenter } from './chat.presenter';
 
+// CONTROLLERS
+export const ChatControllersDoc = createApiDocs(
+  ApiTags('Chats'),
+  UnauthorizedResponseDoc(),
+  InternalServerErrorResponseDoc(),
+);
 // CREATE
 export const CreateResponseDoc = createApiDocs(
   ApiSuccessRequestItemResponse({

@@ -1,12 +1,22 @@
 import { HttpStatus } from '@nestjs/common';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   ApiErrorRequestItemResponse,
   ApiSuccessRequestItemResponse,
   createApiDocs,
 } from 'src/shared/decorator.shared';
+import {
+  InternalServerErrorResponseDoc,
+  UnauthorizedResponseDoc,
+} from 'src/shared/doc.shared';
 import { UserPresenter } from './user.presenter';
 
+// CONTROLLERS
+export const UserControllersDoc = createApiDocs(
+  ApiTags('Users'),
+  UnauthorizedResponseDoc(),
+  InternalServerErrorResponseDoc(),
+);
 // FIND BY ID OR EMAIL
 export const FindByIdOrEmailResponseDoc = createApiDocs(
   ApiParam({

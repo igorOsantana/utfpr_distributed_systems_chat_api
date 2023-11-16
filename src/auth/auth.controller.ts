@@ -8,8 +8,9 @@ import {
 } from '@nestjs/common';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
 import { UserServices } from 'src/user/user.service';
-import { AuthControllersDoc, Public } from './auth.decorator';
+import { Public } from './auth.decorator';
 import {
+  AuthControllersDoc,
   MeResponseDoc,
   RegisterResponseDoc,
   SignInResponseDoc,

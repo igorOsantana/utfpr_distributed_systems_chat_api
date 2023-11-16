@@ -10,8 +10,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
-import { ChatControllersDoc } from './chat.decorator';
 import {
+  ChatControllersDoc,
   CreateResponseDoc,
   FindAllResponseDoc,
   MarkAsReadResponseDoc,

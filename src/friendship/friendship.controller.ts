@@ -8,11 +8,11 @@ import {
   Post,
 } from '@nestjs/common';
 import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
-import { FriendshipControllersDoc } from './friendship.decorator';
 import {
   AcceptResponseDoc,
   CreateResponseDoc,
   DeclineResponseDoc,
+  FriendshipControllersDoc,
   MyFriendsResponseDoc,
   RequestsResponseDoc,
 } from './friendship.doc';
