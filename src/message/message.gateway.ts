@@ -65,13 +65,7 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
       const recipientId = newChat.recipient.id;
       const recipientClient = this.connectedClients.get(recipientId);
 
-      this.emitReceiveNewChatEvent(
-        client,
-        newChat,
-        reqUserId,
-        recipientClient,
-        recipientId,
-      );
+      this.emitReceiveNewChatEvent(client, newChat, reqUserId, recipientClient);
     } catch (error) {
       console.error(error);
     }
@@ -82,14 +76,13 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
     newChat: ChatEntity,
     reqUserId: string,
     recipientClient: Socket,
-    recipientId: string,
   ) {
     client.emit('receiveNewChat', new ChatPresenter(newChat, reqUserId));
 
     if (recipientClient) {
       recipientClient.emit(
         'receiveNewChat',
-        new ChatPresenter(newChat, recipientId),
+        new ChatPresenter(newChat, reqUserId),
       );
     }
   }
