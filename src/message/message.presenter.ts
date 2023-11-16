@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TPaginationOutput } from 'src/shared/interface.shared';
 import { PaginationPresenter } from 'src/shared/presenter.shared';
+import { UserPresenter } from 'src/user/user.presenter';
 import { MessageEntity } from './message.entity';
 
 export class MessagePresenter {
@@ -8,6 +9,8 @@ export class MessagePresenter {
   id: string;
   @ApiProperty()
   content: string;
+  @ApiProperty({ required: false })
+  sender?: UserPresenter;
   @ApiProperty()
   senderId: string;
   @ApiProperty()
@@ -20,6 +23,7 @@ export class MessagePresenter {
   constructor(message: MessageEntity) {
     this.id = message.id;
     this.content = message.content;
+    this.sender = message.sender;
     this.senderId = message.senderId;
     this.chatId = message.chatId;
     this.createdAt = message.createdAt;

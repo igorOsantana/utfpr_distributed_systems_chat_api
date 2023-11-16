@@ -14,6 +14,8 @@ export class ChatPresenter {
   @ApiProperty()
   recipient: UserPresenter;
   @ApiProperty()
+  sender: UserPresenter;
+  @ApiProperty()
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
@@ -25,6 +27,7 @@ export class ChatPresenter {
     this.read = chat.read;
     this.lastMessage = chat.lastMessage;
     this.recipient = new UserPresenter(chat.recipient);
+    this.sender = new UserPresenter(chat.sender);
     this.createdAt = chat.createdAt;
     this.updatedAt = chat.updatedAt;
   }

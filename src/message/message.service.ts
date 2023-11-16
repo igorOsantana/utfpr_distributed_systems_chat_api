@@ -19,6 +19,7 @@ export class MessageServices {
             chat: { connect: { id: input.chatId } },
             sender: { connect: { id: input.ownerId } },
           },
+          include: { sender: true },
         }),
         this.databaseServices.chat.update({
           where: { id: input.chatId },

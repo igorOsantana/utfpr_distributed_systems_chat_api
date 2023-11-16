@@ -1,27 +1,30 @@
-import { Message } from '@prisma/client';
+import { Message, User } from '@prisma/client';
 import { TPaginationOutput } from 'src/shared/interface.shared';
+import { UserEntity } from 'src/user/user.entity';
 
 export class MessageEntity {
   id: string;
   content: string;
+  sender?: UserEntity;
   senderId: string;
   chatId: string;
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(input?: Message) {
+  constructor(input?: PrismaMessage) {
     if (!input) return;
 
     this.id = input.id;
     this.content = input.content;
     this.chatId = input.chatId;
+    this.sender = input.sender;
     this.senderId = input.senderId;
     this.createdAt = input.createdAt;
     this.updatedAt = input.updatedAt;
   }
 
   list(
-    messages: Message[],
+    messages: PrismaMessage[],
     skipped: number,
     total: number,
   ): TPaginationOutput<MessageEntity> {
@@ -35,3 +38,5 @@ export class MessageEntity {
     };
   }
 }
+
+type PrismaMessage = Message & { sender?: User };

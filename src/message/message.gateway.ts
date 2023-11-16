@@ -11,6 +11,7 @@ import { ChatPresenter } from 'src/chat/chat.presenter';
 import { ChatUseCases } from 'src/chat/chat.usecase';
 import { MessageEntity } from './message.entity';
 import { TEventSendNewMessageInput } from './message.interface';
+import { MessagePresenter } from './message.presenter';
 import { MessageUseCases } from './message.usecase';
 
 @WebSocketGateway(undefined, {
@@ -112,10 +113,13 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
     newMessage: MessageEntity,
     recipientClient: Socket,
   ) {
-    client.emit('receiveNewMessage', newMessage);
+    client.emit('receiveNewMessage', new MessagePresenter(newMessage));
 
     if (recipientClient) {
-      recipientClient.emit('receiveNewMessage', newMessage);
+      recipientClient.emit(
+        'receiveNewMessage',
+        new MessagePresenter(newMessage),
+      );
     }
   }
 

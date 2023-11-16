@@ -7,6 +7,7 @@ export class ChatEntity {
   read: boolean;
   lastMessage: string;
   recipient: UserEntity;
+  sender: UserEntity;
   createdAt: Date;
   updatedAt: Date;
 
@@ -54,6 +55,7 @@ export class ChatEntity {
       if (info.userId !== reqUserId) {
         this.recipient = info.user;
       } else if (info.userId === reqUserId) {
+        this.sender = info.user;
         this.read = info.read;
       }
     }
