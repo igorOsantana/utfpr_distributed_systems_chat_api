@@ -45,6 +45,12 @@ export class MessageWebSocketGateway implements OnGatewayConnection {
     console.log('disconnected: ', userId);
   }
 
+  @SubscribeMessage('markChatAsRead')
+  async markChatAsRead(client: Socket, chatId: string) {
+    const userId = await this.extractUserIdFromSocket(client);
+    await this.chatUseCases.markAsRead(chatId, userId);
+  }
+
   @SubscribeMessage('createNewChat')
   async createNewChat(client: Socket, payload: TEventCreateNewChatInput) {
     try {
