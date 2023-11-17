@@ -4,11 +4,11 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { ErrorFilter } from './filters/error.filter';
-import { LoggerInterceptor } from './interceptors/logger.interceptor';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
-import { TimeoutInterceptor } from './interceptors/timeout.interceptor';
 import { ValidationException } from './shared/exception.shared';
+import { ErrorFilter } from './shared/filters/error.filter';
+import { LoggerInterceptor } from './shared/interceptors/logger.interceptor';
+import { ResponseInterceptor } from './shared/interceptors/response.interceptor';
+import { TimeoutInterceptor } from './shared/interceptors/timeout.interceptor';
 import { LoggerApi } from './shared/logger.shared';
 
 async function bootstrap() {
@@ -35,6 +35,13 @@ async function bootstrap() {
 function setupSwagger(app: NestExpressApplication) {
   const config = new DocumentBuilder()
     .setTitle('UTFPR Distributed Systems Chat API')
+    .addBearerAuth({
+      name: 'Authorization',
+      type: 'http',
+      scheme: 'bearer',
+      description: 'Enter JWT token',
+      bearerFormat: 'JWT',
+    })
     .setVersion('1.0')
     .build();
 

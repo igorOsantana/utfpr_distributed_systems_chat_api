@@ -6,7 +6,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiException } from 'src/shared/exception.shared';
+import {
+  ApiException,
+  INTERNAL_SERVER_ERROR_MESSAGE,
+} from 'src/shared/exception.shared';
 import { LoggerApi } from 'src/shared/logger.shared';
 
 @Catch()
@@ -18,7 +21,7 @@ export class ErrorFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+    let message = INTERNAL_SERVER_ERROR_MESSAGE;
 
     if (
       exception instanceof ApiException ||

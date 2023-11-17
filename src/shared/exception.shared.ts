@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 
-const INTERNAL_SERVER_ERROR_MESSAGE =
+export const INTERNAL_SERVER_ERROR_MESSAGE =
   'The server encountered an error and could not complete your request';
 
 export class ApiException extends HttpException {

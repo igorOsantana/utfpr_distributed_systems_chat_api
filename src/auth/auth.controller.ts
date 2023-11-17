@@ -6,22 +6,14 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import {
-  ApiErrorRequestItemResponse,
-  ApiSuccessRequestItemResponse,
-  RequestUser,
-  TRequestUser,
-} from 'src/shared/decorator.shared';
-import { UserService } from 'src/user/user.service';
+import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
+import { UserServices } from 'src/user/user.service';
 import { Public } from './auth.decorator';
 import {
-  MeSuccessResponse,
-  MeUnauthorizedResponse,
-  RegisterEmailAlreadyExistsResponseDoc,
-  RegisterSuccessResponseDoc,
-  SignInInvalidCredentialsResponseDoc,
-  SignInSuccessResponseDoc,
+  AuthControllersDoc,
+  MeResponseDoc,
+  RegisterResponseDoc,
+  SignInResponseDoc,
 } from './auth.doc';
 import { RegisterAuthDto, SignInAuthDto } from './auth.dto';
 import {
@@ -29,41 +21,38 @@ import {
   RegisterAuthPresenter,
   SignInAuthPresenter,
 } from './auth.presenter';
-import { AuthService } from './auth.service';
+import { AuthServices } from './auth.service';
 
-@ApiTags('Auth')
 @Controller('auth')
-export class AuthController {
+@AuthControllersDoc()
+export class AuthControllers {
   constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
+    private readonly authServices: AuthServices,
+    private readonly userServices: UserServices,
   ) {}
 
   @Get('/me')
-  @ApiSuccessRequestItemResponse(MeSuccessResponse)
-  @ApiErrorRequestItemResponse(MeUnauthorizedResponse)
+  @MeResponseDoc()
   async me(@RequestUser() reqUser: TRequestUser) {
-    const user = await this.userService.findById(reqUser.id);
+    const user = await this.userServices.findById(reqUser.id);
     return new MePresenter(user);
   }
 
   @Public()
   @Post('/sign-in')
   @HttpCode(HttpStatus.OK)
-  @ApiSuccessRequestItemResponse(SignInSuccessResponseDoc)
-  @ApiErrorRequestItemResponse(SignInInvalidCredentialsResponseDoc)
+  @SignInResponseDoc()
   async signIn(@Body() dto: SignInAuthDto) {
     const { email, password } = dto;
-    const accessToken = await this.authService.signIn(email, password);
+    const accessToken = await this.authServices.signIn(email, password);
     return new SignInAuthPresenter(accessToken);
   }
 
   @Public()
   @Post('/register')
-  @ApiSuccessRequestItemResponse(RegisterSuccessResponseDoc)
-  @ApiErrorRequestItemResponse(RegisterEmailAlreadyExistsResponseDoc)
+  @RegisterResponseDoc()
   async register(@Body() dto: RegisterAuthDto) {
-    const accessToken = await this.authService.register(dto);
+    const accessToken = await this.authServices.register(dto);
     return new RegisterAuthPresenter(accessToken);
   }
 }

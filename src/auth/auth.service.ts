@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { UserExceptions } from 'src/user/user.exception';
-import { TCreateUser } from 'src/user/user.interface';
-import { UserService } from 'src/user/user.service';
+import { TCreateUserInput } from 'src/user/user.interface';
+import { UserServices } from 'src/user/user.service';
 import { AuthExceptions } from './auth.exception';
 
 @Injectable()
-export class AuthService {
+export class AuthServices {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
+    private readonly userServices: UserServices,
   ) {}
 
   async hash(input: string): Promise<string> {
@@ -40,7 +40,7 @@ export class AuthService {
 
   async signIn(email: string, password: string): Promise<string> {
     try {
-      const user = await this.userService.findByEmail(email);
+      const user = await this.userServices.findByEmail(email);
       const isPasswordValid = await this.compare(password, user.password);
 
       if (!isPasswordValid) {
@@ -59,7 +59,7 @@ export class AuthService {
     }
   }
 
-  async register(input: TCreateUser): Promise<string> {
+  async register(input: TCreateUserInput): Promise<string> {
     try {
       const emailExists = await this.emailExists(input.email);
 
@@ -67,7 +67,7 @@ export class AuthService {
         throw new UserExceptions().emailInUse();
       }
 
-      const user = await this.userService.create({
+      const user = await this.userServices.create({
         ...input,
         password: await this.hash(input.password),
       });
@@ -82,13 +82,24 @@ export class AuthService {
 
   private async emailExists(email: string): Promise<boolean> {
     try {
-      await this.userService.findByEmail(email);
+      await this.userServices.findByEmail(email);
       return true;
     } catch (error) {
       if (UserExceptions.isOwnException(error)) {
         return false;
       }
       throw new AuthExceptions().register(error);
+    }
+  }
+
+  async verifyToken(token: string) {
+    try {
+      return await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   }
 }

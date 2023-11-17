@@ -1,16 +1,39 @@
+version: '2.23'
+
+volumes:
+  apidata:
+    driver: local
+  pgdata:
+    driver: local
+networks:
+  bridge:
+    driver: bridge
+
 services:
-  database:
-    container_name: utfpr-distributed-systems-chat-api-database
+  db:
+    container_name: db-utfpr-distributed-systems-chat-api
     image: postgres
     restart: always
+    networks:
+      - bridge
+    volumes:
+      - pgdata:/data/postgres
     environment:
       - POSTGRES_DB=${DATABASE_NAME}
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
     ports:
       - 5432:5432
+  api:
+    container_name: api-utfpr-distributed-systems-chat
+    build:
+      context: .
+    restart: always
+    networks:
+      - bridge
     volumes:
-      - pgdata:/postgres/data
-
-volumes:
-  pgdata:
+      - apidata:/data/api
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db

@@ -1,4 +1,4 @@
-import { $Enums, Friendships, Users } from '@prisma/client';
+import { $Enums, Friendship, User } from '@prisma/client';
 import { UserEntity } from 'src/user/user.entity';
 
 export class FriendshipEntity {
@@ -42,7 +42,7 @@ export enum FriendshipStatus {
   DECLINED = 'DECLINED',
 }
 
-type TFriendshipInvitations = Friendships & {
-  sender: Users;
-  recipient: Users;
+type TFriendshipInvitations = Friendship & {
+  sender: User;
+  recipient: User;
 };

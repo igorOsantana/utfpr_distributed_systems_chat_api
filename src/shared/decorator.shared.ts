@@ -14,10 +14,18 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 
+type TApiDocs = ReturnType<
+  typeof ApiSuccessRequestItemResponse | typeof ApiErrorRequestItemResponse
+>;
+
+export const createApiDocs = (...docs: TApiDocs[]) => {
+  return applyDecorators.bind(null, ...docs);
+};
+
 export type TApiSuccessRequestItemResponseProps = {
   model: Type<any>;
   description: string;
-  entity: string;
+  url: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   status: HttpStatus;
 };
@@ -25,14 +33,14 @@ export type TApiSuccessRequestItemResponseProps = {
 export const ApiSuccessRequestItemResponse = ({
   model,
   description,
-  entity,
+  url,
   method,
   status,
 }: TApiSuccessRequestItemResponseProps) => {
   const props = getResponseProps({
     description,
     model,
-    entity,
+    url,
     method,
     status,
   });
@@ -49,7 +57,7 @@ export const ApiSuccessRequestItemResponse = ({
 const getResponseProps = ({
   description,
   model,
-  entity,
+  url,
   method,
   status,
 }: TApiSuccessRequestItemResponseProps) => {
@@ -61,7 +69,7 @@ const getResponseProps = ({
         ...(model ? { data: { $ref: getSchemaPath(model) } } : {}),
         path: {
           type: 'string',
-          example: `/api/v1/${entity}/`,
+          example: '/' + url,
         },
         method: {
           type: 'string',

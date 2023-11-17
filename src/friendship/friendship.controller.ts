@@ -7,43 +7,29 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { RequestUser, TRequestUser } from 'src/shared/decorator.shared';
 import {
-  ApiErrorRequestItemResponse,
-  ApiSuccessRequestItemResponse,
-  ApiSuccessRequestItemResponseNoContent,
-  RequestUser,
-  TRequestUser,
-} from 'src/shared/decorator.shared';
-import {
-  AcceptFriendshipNotFoundResponse,
-  AcceptParamsSenderId,
-  AcceptSuccessResponse,
-  CreateFriendshipExistsResponse,
-  CreateParamsRecipientId,
-  CreateSuccessResponse,
-  DeclineFriendshipNotFoundResponse,
-  DeclineParamsSenderId,
-  DeclineSuccessResponse,
-  MyFriendsSuccessResponse,
-  RequestsSuccessResponse,
+  AcceptResponseDoc,
+  CreateResponseDoc,
+  DeclineResponseDoc,
+  FriendshipControllersDoc,
+  MyFriendsResponseDoc,
+  RequestsResponseDoc,
 } from './friendship.doc';
 import {
   FriendshipPresenter,
   MyFriendsFriendshipPresenter,
   RequestsFriendshipPresenter,
 } from './friendship.presenter';
-import { FriendshipService } from './friendship.service';
+import { FriendshipServices } from './friendship.service';
 
-@ApiTags('Friendships')
 @Controller('friendships')
-export class FriendshipController {
-  constructor(private readonly friendshipService: FriendshipService) {}
+@FriendshipControllersDoc()
+export class FriendshipControllers {
+  constructor(private readonly friendshipService: FriendshipServices) {}
 
   @Post('/:recipientId')
-  @ApiParam(CreateParamsRecipientId)
-  @ApiSuccessRequestItemResponse(CreateSuccessResponse)
-  @ApiErrorRequestItemResponse(CreateFriendshipExistsResponse)
+  @CreateResponseDoc()
   async create(
     @RequestUser() reqUser: TRequestUser,
     @Param('recipientId')
@@ -58,9 +44,7 @@ export class FriendshipController {
 
   @Patch('/accept/:senderId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiParam(AcceptParamsSenderId)
-  @ApiSuccessRequestItemResponseNoContent(AcceptSuccessResponse)
-  @ApiErrorRequestItemResponse(AcceptFriendshipNotFoundResponse)
+  @AcceptResponseDoc()
   async accept(
     @Param('senderId') senderId: string,
     @RequestUser() reqUser: TRequestUser,
@@ -70,9 +54,7 @@ export class FriendshipController {
 
   @Patch('/decline/:senderId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiParam(DeclineParamsSenderId)
-  @ApiSuccessRequestItemResponseNoContent(DeclineSuccessResponse)
-  @ApiErrorRequestItemResponse(DeclineFriendshipNotFoundResponse)
+  @DeclineResponseDoc()
   async decline(
     @Param('senderId') senderId: string,
     @RequestUser() reqUser: TRequestUser,
@@ -81,14 +63,14 @@ export class FriendshipController {
   }
 
   @Get('/my-friends')
-  @ApiSuccessRequestItemResponse(MyFriendsSuccessResponse)
+  @MyFriendsResponseDoc()
   async myFriends(@RequestUser() reqUser: TRequestUser) {
     const friendships = await this.friendshipService.myFriends(reqUser.id);
     return new MyFriendsFriendshipPresenter(reqUser.id, friendships);
   }
 
   @Get('/requests')
-  @ApiSuccessRequestItemResponse(RequestsSuccessResponse)
+  @RequestsResponseDoc()
   async myPendingFriendships(@RequestUser() reqUser: TRequestUser) {
     const friendships = await this.friendshipService.requests(reqUser.id);
     return new RequestsFriendshipPresenter(friendships);

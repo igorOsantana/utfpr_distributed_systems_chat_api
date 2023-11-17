@@ -5,7 +5,7 @@ import {
   IsStrongPassword,
   MinLength,
 } from 'class-validator';
-import { TCreateUser } from 'src/user/user.interface';
+import { TCreateUserInput } from 'src/user/user.interface';
 
 export class SignInAuthDto {
   @IsNotEmpty()
@@ -18,7 +18,7 @@ export class SignInAuthDto {
   password: string;
 }
 
-export class RegisterAuthDto implements TCreateUser {
+export class RegisterAuthDto implements TCreateUserInput {
   @IsNotEmpty()
   @IsString()
   @MinLength(3)

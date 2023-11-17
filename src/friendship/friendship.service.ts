@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseServices } from 'src/shared/database/database.service';
 import { FriendshipEntity } from './friendship.entity';
 import { FriendshipExceptions } from './friendship.exception';
 
 @Injectable()
-export class FriendshipService {
-  constructor(private readonly databaseService: DatabaseService) {}
+export class FriendshipServices {
+  constructor(private readonly databaseService: DatabaseServices) {}
   async create(
     senderId: string,
     recipientId: string,
   ): Promise<FriendshipEntity> {
-    const exists = await this.databaseService.friendships.findUnique({
+    const exists = await this.databaseService.friendship.findUnique({
       where: { senderId_recipientId: { senderId, recipientId } },
     });
 
@@ -19,7 +19,7 @@ export class FriendshipService {
     }
 
     try {
-      const friendship = await this.databaseService.friendships.create({
+      const friendship = await this.databaseService.friendship.create({
         data: { senderId, recipientId },
         include: {
           sender: true,
@@ -35,7 +35,7 @@ export class FriendshipService {
   async accept(senderId: string, recipientId: string): Promise<void> {
     await this.validateIfExists(senderId, recipientId);
     try {
-      await this.databaseService.friendships.update({
+      await this.databaseService.friendship.update({
         where: { senderId_recipientId: { senderId, recipientId } },
         data: { status: 'ACCEPTED' },
       });
@@ -47,7 +47,7 @@ export class FriendshipService {
   async decline(senderId: string, recipientId: string): Promise<void> {
     await this.validateIfExists(senderId, recipientId);
     try {
-      await this.databaseService.friendships.update({
+      await this.databaseService.friendship.update({
         where: { senderId_recipientId: { senderId, recipientId } },
         data: { status: 'DECLINED' },
       });
@@ -58,7 +58,7 @@ export class FriendshipService {
 
   async myFriends(userId: string): Promise<FriendshipEntity[]> {
     try {
-      const friendships = await this.databaseService.friendships.findMany({
+      const friendships = await this.databaseService.friendship.findMany({
         where: {
           OR: [{ senderId: userId }, { recipientId: userId }],
           status: 'ACCEPTED',
@@ -76,7 +76,7 @@ export class FriendshipService {
 
   async requests(recipientId: string): Promise<FriendshipEntity[]> {
     try {
-      const friendships = await this.databaseService.friendships.findMany({
+      const friendships = await this.databaseService.friendship.findMany({
         where: {
           recipientId,
           status: 'PENDING',
@@ -96,7 +96,7 @@ export class FriendshipService {
     senderId: string,
     recipientId: string,
   ): Promise<void> {
-    const exists = await this.databaseService.friendships.findUnique({
+    const exists = await this.databaseService.friendship.findUnique({
       where: { senderId_recipientId: { senderId, recipientId } },
     });
 

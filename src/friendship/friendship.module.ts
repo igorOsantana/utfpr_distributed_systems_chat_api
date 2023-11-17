@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from 'src/database/database.module';
-import { FriendshipController } from './friendship.controller';
-import { FriendshipService } from './friendship.service';
+import { DatabaseModule } from 'src/shared/database/database.module';
+import { FriendshipControllers } from './friendship.controller';
+import { FriendshipServices } from './friendship.service';
 
 @Module({
   imports: [DatabaseModule],
-  controllers: [FriendshipController],
-  providers: [FriendshipService],
-  exports: [FriendshipService],
+  controllers: [FriendshipControllers],
+  providers: [FriendshipServices],
+  exports: [FriendshipServices],
 })
 export class FriendshipModule {}
