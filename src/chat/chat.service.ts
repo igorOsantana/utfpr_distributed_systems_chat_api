@@ -88,6 +88,7 @@ export class ChatServices {
           include: {
             participants: { include: { user: true } },
           },
+          orderBy: { updatedAt: 'asc' },
           take,
           skip,
         }),
